@@ -1,14 +1,17 @@
 import { useTransactions } from '../domain/transactions/useTransactions'
 import { formatTry } from '../shared/format'
+import TransactionForm from '../components/TransactionForm'
 
 export default function HistoryPage() {
-  const { transactions, totalSpent } = useTransactions()
+  const { transactions, totalSpent, addTransaction } = useTransactions()
 
   return (
     <div>
       <h2>History</h2>
 
-      <div className="card between" style={{ marginTop: '1rem' }}>
+      <TransactionForm onSubmit={addTransaction} />
+
+      <div className="card between" style={{ marginTop: '1.5rem' }}>
         <span className="label">Total Spent</span>
         <span className="big">{formatTry(totalSpent)}</span>
       </div>
