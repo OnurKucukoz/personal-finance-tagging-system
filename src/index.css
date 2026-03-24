@@ -487,3 +487,52 @@ dialog::backdrop {
   padding: 0;
   background-color: transparent;
 }
+
+/* --- Tag analytics ---------------------------------------- */
+.analytics-list {
+  gap: var(--space-3);
+}
+
+.tag-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.tag {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  font-family: var(--font-mono);
+  flex: 1;
+  min-width: 5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.percent {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  min-width: 3rem;
+  text-align: right;
+}
+
+.bar {
+  margin-top: var(--space-2);
+  height: 0.5rem;
+  background-color: var(--color-border);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.bar__fill {
+  height: 100%;
+  background-color: var(--color-primary);
+  border-radius: 9999px;
+  transition: width 0.3s ease;
+  min-width: 2px;
+}
