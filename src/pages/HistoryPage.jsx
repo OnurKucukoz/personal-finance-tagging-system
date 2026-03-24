@@ -1,12 +1,28 @@
 import { useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { useTransactions } from '../domain/transactions/useTransactions'
 import { formatTry } from '../shared/format'
 import TransactionForm from '../components/TransactionForm'
 import Dialog from '../components/Dialog'
 
+function normalizeTag(raw) {
+  const lower = raw.toLowerCase()
+  return lower.startsWith('#') ? lower : `#${lower}`
+}
+
 export default function HistoryPage() {
-  const { transactions, totalSpent, addTransaction, updateTransaction, deleteTransaction } =
+  const { transactions, addTransaction, updateTransaction, deleteTransaction } =
     useTransactions()
+
+  const [searchParams, setSearchParams] = useSearchParams()
+  const rawTag = searchParams.get('tag')
+  const activeTag = rawTag ? normalizeTag(rawTag) : null
+
+  const visibleTransactions = activeTag
+    ? transactions.filter((t) => t.tags.includes(activeTag))
+    : transactions
+
+  const filteredTotalSpent = visibleTransactions.reduce((sum, t) => sum + t.amount, 0)
 
   const [editingTx, setEditingTx] = useState(null)
 
@@ -29,6 +45,10 @@ export default function HistoryPage() {
     }
   }
 
+  function handleClearFilter() {
+    setSearchParams({})
+  }
+
   return (
     <div>
       <h2>History</h2>
@@ -37,16 +57,30 @@ export default function HistoryPage() {
 
       <div className="card between" style={{ marginTop: '1.5rem' }}>
         <span className="label">Total Spent</span>
-        <span className="big">{formatTry(totalSpent)}</span>
+        <span className="big">{formatTry(filteredTotalSpent)}</span>
       </div>
 
-      {transactions.length === 0 ? (
+      {activeTag && (
+        <div className="filter-row" style={{ marginTop: '1rem' }}>
+          <span className="label">Filtered by:</span>
+          <span className="pill">{activeTag}</span>
+          <button
+            type="button"
+            className="button button--ghost"
+            onClick={handleClearFilter}
+          >
+            Clear
+          </button>
+        </div>
+      )}
+
+      {visibleTransactions.length === 0 ? (
         <p style={{ marginTop: '1.5rem', color: 'var(--color-text-muted)' }}>
-          No transactions yet.
+          {activeTag ? `No transactions tagged ${activeTag}.` : 'No transactions yet.'}
         </p>
       ) : (
         <ul className="list" style={{ marginTop: '1.5rem' }}>
-          {transactions.map((t) => (
+          {visibleTransactions.map((t) => (
             <li key={t.id} className="list__item">
               <div className="row between">
                 <span className="item__title">{t.title}</span>

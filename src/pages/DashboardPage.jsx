@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { useTransactions } from '../domain/transactions/useTransactions'
 import { computeTagAnalytics } from '../domain/transactions/analytics'
 import { formatTry } from '../shared/format'
@@ -22,19 +23,24 @@ export default function DashboardPage() {
       ) : (
         <ul className="list analytics-list" style={{ marginTop: '1.5rem' }}>
           {rows.map(({ tag, total, percent }) => (
-            <li key={tag} className="list__item">
-              <div className="tag-row">
-                <span className="tag">{tag}</span>
-                <span className="item__amount">{formatTry(total)}</span>
-                <span className="percent">{Math.round(percent)}%</span>
-              </div>
-              <div className="bar">
-                <div
-                  className="bar__fill"
-                  style={{ width: `${percent}%` }}
-                  role="presentation"
-                />
-              </div>
+            <li key={tag} className="list__item list__item--link">
+              <Link
+                to={`/history?tag=${encodeURIComponent(tag)}`}
+                className="link-row"
+              >
+                <div className="tag-row">
+                  <span className="tag">{tag}</span>
+                  <span className="item__amount">{formatTry(total)}</span>
+                  <span className="percent">{Math.round(percent)}%</span>
+                </div>
+                <div className="bar">
+                  <div
+                    className="bar__fill"
+                    style={{ width: `${percent}%` }}
+                    role="presentation"
+                  />
+                </div>
+              </Link>
             </li>
           ))}
         </ul>

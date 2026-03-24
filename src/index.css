@@ -536,3 +536,58 @@ dialog::backdrop {
   transition: width 0.3s ease;
   min-width: 2px;
 }
+
+/* --- Clickable analytics rows ----------------------------- */
+.list__item--link {
+  padding: 0;
+}
+
+.link-row {
+  display: block;
+  padding: var(--space-3) var(--space-4);
+  text-decoration: none;
+  color: inherit;
+  border-radius: var(--radius);
+  transition: background-color 0.15s;
+}
+
+.link-row:hover {
+  background-color: color-mix(in srgb, var(--color-primary) 6%, transparent);
+  text-decoration: none;
+}
+
+.link-row:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 40%, transparent);
+}
+
+/* --- Filter pill ------------------------------------------ */
+.filter-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.filter-row .button {
+  width: auto;
+  min-width: 5rem;
+  min-height: 2rem;
+  padding: var(--space-1) var(--space-3);
+  font-size: 0.875rem;
+  align-self: auto;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-1) var(--space-3);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  color: var(--color-primary);
+  background-color: color-mix(in srgb, var(--color-primary) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-primary) 30%, transparent);
+  border-radius: 9999px;
+  white-space: nowrap;
+}
