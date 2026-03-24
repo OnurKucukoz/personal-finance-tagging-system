@@ -1,9 +1,33 @@
+import { useState } from 'react'
 import { useTransactions } from '../domain/transactions/useTransactions'
 import { formatTry } from '../shared/format'
 import TransactionForm from '../components/TransactionForm'
+import Dialog from '../components/Dialog'
 
 export default function HistoryPage() {
-  const { transactions, totalSpent, addTransaction } = useTransactions()
+  const { transactions, totalSpent, addTransaction, updateTransaction, deleteTransaction } =
+    useTransactions()
+
+  const [editingTx, setEditingTx] = useState(null)
+
+  function handleEdit(tx) {
+    setEditingTx(tx)
+  }
+
+  function handleEditClose() {
+    setEditingTx(null)
+  }
+
+  function handleEditSubmit({ title, amount, date, tags }) {
+    updateTransaction(editingTx.id, { title, amount, date, tags })
+    setEditingTx(null)
+  }
+
+  function handleDelete(id) {
+    if (window.confirm('Delete this transaction?')) {
+      deleteTransaction(id)
+    }
+  }
 
   return (
     <div>
@@ -32,10 +56,47 @@ export default function HistoryPage() {
                 <span className="small">{t.date}</span>
                 <span className="small">{t.tags.join(' ')}</span>
               </div>
+              <div className="actions">
+                <button
+                  type="button"
+                  className="button button--ghost"
+                  onClick={() => handleEdit(t)}
+                >
+                  Edit
+                </button>
+                <button
+                  type="button"
+                  className="button button--danger"
+                  onClick={() => handleDelete(t.id)}
+                >
+                  Delete
+                </button>
+              </div>
             </li>
           ))}
         </ul>
       )}
+
+      <Dialog
+        open={editingTx !== null}
+        title="Edit Transaction"
+        onClose={handleEditClose}
+      >
+        {editingTx && (
+          <TransactionForm
+            key={editingTx.id}
+            onSubmit={handleEditSubmit}
+            initialValues={{
+              title: editingTx.title,
+              amount: editingTx.amount,
+              date: editingTx.date,
+              tagsInput: editingTx.tags.join(' '),
+            }}
+            submitLabel="Save Changes"
+            resetOnSubmit={false}
+          />
+        )}
+      </Dialog>
     </div>
   )
 }

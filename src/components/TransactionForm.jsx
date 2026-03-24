@@ -2,18 +2,38 @@ import { useState } from 'react'
 import { parseTags } from '../domain/transactions/tags'
 import { todayIsoDate } from '../shared/date'
 
-const INITIAL_STATE = {
+const EMPTY_STATE = {
   title: '',
   amount: '',
   date: todayIsoDate(),
   tags: '',
 }
 
+function buildInitialState(initialValues) {
+  if (!initialValues) return { ...EMPTY_STATE, date: todayIsoDate() }
+  return {
+    title: initialValues.title ?? '',
+    amount: initialValues.amount !== undefined ? String(initialValues.amount) : '',
+    date: initialValues.date ?? todayIsoDate(),
+    tags: initialValues.tagsInput ?? '',
+  }
+}
+
 /**
- * @param {{ onSubmit: (data: { title: string, amount: number, date: string, tags: string[] }) => void }} props
+ * @param {{
+ *   onSubmit: (data: { title: string, amount: number, date: string, tags: string[] }) => void,
+ *   initialValues?: { title?: string, amount?: number, date?: string, tagsInput?: string },
+ *   submitLabel?: string,
+ *   resetOnSubmit?: boolean
+ * }} props
  */
-export default function TransactionForm({ onSubmit }) {
-  const [fields, setFields] = useState(INITIAL_STATE)
+export default function TransactionForm({
+  onSubmit,
+  initialValues,
+  submitLabel = 'Add Transaction',
+  resetOnSubmit = true,
+}) {
+  const [fields, setFields] = useState(() => buildInitialState(initialValues))
   const [errors, setErrors] = useState({})
 
   function handleChange(e) {
@@ -66,14 +86,15 @@ export default function TransactionForm({ onSubmit }) {
       tags: tagsResult.tags,
     })
 
-    // Reset form — keep date fresh
-    setFields({ ...INITIAL_STATE, date: todayIsoDate() })
-    setErrors({})
+    if (resetOnSubmit) {
+      setFields({ ...EMPTY_STATE, date: todayIsoDate() })
+      setErrors({})
+    }
   }
 
   return (
     <form className="form" onSubmit={handleSubmit} noValidate>
-      <h3>Add Transaction</h3>
+      <h3>{submitLabel}</h3>
 
       <div className="field">
         <label htmlFor="tf-title">Title</label>
@@ -157,7 +178,7 @@ export default function TransactionForm({ onSubmit }) {
       </div>
 
       <button type="submit" className="button">
-        Add Transaction
+        {submitLabel}
       </button>
     </form>
   )
