@@ -171,3 +171,70 @@ a:hover {
     padding: var(--space-8) var(--space-6);
   }
 }
+
+/* --- Component utilities ---------------------------------- */
+.card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--space-4);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.label {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+.big {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.small {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+/* --- Transaction list ------------------------------------- */
+.list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.list__item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.item__title {
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.item__amount {
+  font-weight: 600;
+  color: var(--color-text);
+  white-space: nowrap;
+}
