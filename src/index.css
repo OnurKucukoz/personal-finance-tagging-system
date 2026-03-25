@@ -429,6 +429,7 @@ dialog {
   width: min(90vw, 36rem);
   max-height: 90dvh;
   overflow-y: auto;
+  margin: auto;
 }
 
 dialog::backdrop {
@@ -486,6 +487,29 @@ dialog::backdrop {
   border: none;
   padding: 0;
   background-color: transparent;
+}
+
+.dialog__footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--color-border);
+}
+
+.dialog__footer .button {
+  width: auto;
+  align-self: auto;
+  min-width: 6rem;
+  min-height: 2.75rem;
+  font-size: 0.9375rem;
+}
+
+.confirm-dialog__message {
+  font-size: 0.9375rem;
+  color: var(--color-text);
+  line-height: 1.6;
 }
 
 /* --- Tag analytics ---------------------------------------- */

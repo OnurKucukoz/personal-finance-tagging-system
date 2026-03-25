@@ -4,6 +4,7 @@ import { useTransactions } from '../domain/transactions/useTransactions'
 import { formatTry } from '../shared/format'
 import TransactionForm from '../components/TransactionForm'
 import Dialog from '../components/Dialog'
+import ConfirmDialog from '../components/ConfirmDialog'
 
 function normalizeTag(raw) {
   const lower = raw.toLowerCase()
@@ -25,6 +26,7 @@ export default function HistoryPage() {
   const filteredTotalSpent = visibleTransactions.reduce((sum, t) => sum + t.amount, 0)
 
   const [editingTx, setEditingTx] = useState(null)
+  const [deletingTx, setDeletingTx] = useState(null)
 
   function handleEdit(tx) {
     setEditingTx(tx)
@@ -37,12 +39,6 @@ export default function HistoryPage() {
   function handleEditSubmit({ title, amount, date, tags }) {
     updateTransaction(editingTx.id, { title, amount, date, tags })
     setEditingTx(null)
-  }
-
-  function handleDelete(id) {
-    if (window.confirm('Delete this transaction?')) {
-      deleteTransaction(id)
-    }
   }
 
   function handleClearFilter() {
@@ -101,7 +97,7 @@ export default function HistoryPage() {
                 <button
                   type="button"
                   className="button button--danger"
-                  onClick={() => handleDelete(t.id)}
+                  onClick={() => setDeletingTx(t)}
                 >
                   Delete
                 </button>
@@ -131,6 +127,21 @@ export default function HistoryPage() {
           />
         )}
       </Dialog>
+
+      <ConfirmDialog
+        open={deletingTx !== null}
+        title="Delete transaction?"
+        message={
+          deletingTx
+            ? `Delete "${deletingTx.title}"? This cannot be undone.`
+            : null
+        }
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        danger
+        onConfirm={() => deleteTransaction(deletingTx.id)}
+        onClose={() => setDeletingTx(null)}
+      />
     </div>
   )
 }
