@@ -1,15 +1,46 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTransactions } from '../domain/transactions/useTransactions'
 import { computeTagAnalytics } from '../domain/transactions/analytics'
 import { formatTry } from '../shared/format'
+import Dialog from '../components/Dialog'
+import TransactionForm from '../components/TransactionForm'
 
 export default function DashboardPage() {
-  const { transactions } = useTransactions()
+  const { transactions, addTransaction } = useTransactions()
   const { totalSpent, rows } = computeTagAnalytics(transactions)
+  const [dialogOpen, setDialogOpen] = useState(false)
+
+  function handleAddTransaction(data) {
+    addTransaction(data)
+    setDialogOpen(false)
+  }
 
   return (
     <div>
-      <h1>Dashboard</h1>
+      <div className="between" style={{ alignItems: 'center' }}>
+        <h1 style={{ margin: 0 }}>Dashboard</h1>
+        <button
+          type="button"
+          className="button"
+          style={{ width: 'auto' }}
+          onClick={() => setDialogOpen(true)}
+        >
+          Add Transaction
+        </button>
+      </div>
+
+      <Dialog
+        open={dialogOpen}
+        title="Add Transaction"
+        onClose={() => setDialogOpen(false)}
+      >
+        <TransactionForm
+          submitLabel="Add"
+          resetOnSubmit={true}
+          onSubmit={handleAddTransaction}
+        />
+      </Dialog>
 
       <div className="card between" style={{ marginTop: '1.5rem' }}>
         <span className="label">Total Spent</span>
