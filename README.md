@@ -1,16 +1,46 @@
-# React + Vite
+# Personal Finance Tagging System
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A mobile-first personal expense tracker that supports multi-tagging (e.g. `#food #fun`) with local persistence and tag-based analytics.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+### Transaction Entry & Management
+- Add transactions with:
+  - **Title**
+  - **Amount** (positive numbers only)
+  - **Date** (defaults to today)
+  - **Tags** (required, multiple allowed)
+- Tag input is **space-separated**.
+  - Auto-adds `#` if missing
+  - Case-insensitive (stored lowercase)
+  - Deduplicated
+  - Ignores stop-words: `and`, `ve`, `ile`  
+    Example: `work and fun` → `#work #fun`
+- Edit transactions in a native **`<dialog>` modal**
+- Delete transactions with a **confirmation dialog**
 
-## React Compiler
+### Transaction History
+- Chronological list (most recent first)
+- **Total Spent** shown at the top
+- Tag filter via URL query:
+  - `/history?tag=%23food`
+- Clear filter control
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Spending Summary & Analytics (Dashboard)
+- Total spent per tag
+- Percentage of total spending per tag
+- Click a tag to open History filtered by that tag
 
-## Expanding the ESLint configuration
+### Data Persistence
+- Stored in `localStorage` under the key:
+  - `pfts.transactions.v1`
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Tech Stack
+- React + Vite (JavaScript)
+- React Router
+- Vitest + React Testing Library
+
+## Getting Started
+```bash
+npm install
+npm run dev
