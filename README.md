@@ -36,22 +36,22 @@ A mobile-first personal expense tracker that supports multi-tagging (e.g. `#food
   - `pfts.transactions.v1`
 
 ## Screenshots
-Dashboard (Tag Analytics + Quick Add)
+### Dashboard (Tag Analytics + Quick Add)
 ![Dashboard](docs/dashboard.png)
 
 
 
-History (Transactions List)
+### History (Transactions List)
 ![History](docs/history.png)
 
 
 
-Edit Transaction (Dialog)
-![Edit Transaction](docs/edit-transaction.png)
+### Edit Transaction (Dialog)
+![Edit Transaction](docs/edit-transactions.png)
 
 
 
-Filter by Tag
+### Filter by Tag
 ![Filter by Tag](docs/filter-by-tag.png)
 
 ## Tech Stack
