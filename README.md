@@ -44,3 +44,20 @@ A mobile-first personal expense tracker that supports multi-tagging (e.g. `#food
 ```bash
 npm install
 npm run dev
+
+Open the URL Vite prints (usually http://localhost:5173).
+
+
+Scripts
+npm run dev — start dev server
+
+npm run build — production build
+
+npm run preview — preview production build
+
+npm run lint — lint
+
+npm run test:run — run tests once
+
+Notes
+Currency formatting uses tr-TR / TRY.
