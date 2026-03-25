@@ -72,7 +72,9 @@ export default function HistoryPage() {
 
       {visibleTransactions.length === 0 ? (
         <p style={{ marginTop: '1.5rem', color: 'var(--color-text-muted)' }}>
-          {activeTag ? `No transactions tagged ${activeTag}.` : 'No transactions yet.'}
+          {activeTag
+            ? `No transactions for ${activeTag}.`
+            : 'No transactions yet — add one above.'}
         </p>
       ) : (
         <ul className="list" style={{ marginTop: '1.5rem' }}>

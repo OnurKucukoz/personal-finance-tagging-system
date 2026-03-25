@@ -243,12 +243,18 @@ a:hover {
 .form {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: var(--space-6);
   padding: var(--space-4);
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
   margin-top: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .form {
+    gap: var(--space-4);
+  }
 }
 
 .form h3 {
@@ -371,6 +377,13 @@ a:hover {
 
 .button--ghost:focus-visible {
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-text) 20%, transparent);
+}
+
+.button:disabled,
+.button[aria-disabled='true'] {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 .button--danger {

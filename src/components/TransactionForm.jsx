@@ -19,6 +19,30 @@ function buildInitialState(initialValues) {
   }
 }
 
+function validate(fields) {
+  const next = {}
+
+  if (!fields.title.trim()) {
+    next.title = 'Title is required.'
+  }
+
+  const amt = Number(fields.amount)
+  if (fields.amount === '' || Number.isNaN(amt) || amt <= 0) {
+    next.amount = 'Amount must be a number greater than 0.'
+  }
+
+  if (!fields.date) {
+    next.date = 'Date is required.'
+  }
+
+  const tagsResult = parseTags(fields.tags)
+  if (!tagsResult.ok) {
+    next.tags = tagsResult.error
+  }
+
+  return next
+}
+
 /**
  * @param {{
  *   onSubmit: (data: { title: string, amount: number, date: string, tags: string[] }) => void,
@@ -35,46 +59,36 @@ export default function TransactionForm({
 }) {
   const [fields, setFields] = useState(() => buildInitialState(initialValues))
   const [errors, setErrors] = useState({})
+  const [touched, setTouched] = useState({})
+
+  const allErrors = validate(fields)
+  const isInvalid = Object.keys(allErrors).length > 0
+
+  function getFieldError(name) {
+    // Show error only if field has been touched OR form was submitted (errors state set)
+    if (touched[name] || errors[name]) {
+      return allErrors[name]
+    }
+    return undefined
+  }
 
   function handleChange(e) {
     const { name, value } = e.target
     setFields((prev) => ({ ...prev, [name]: value }))
-    // Clear the error for the field being edited
-    if (errors[name]) {
-      setErrors((prev) => ({ ...prev, [name]: undefined }))
-    }
   }
 
-  function validate() {
-    const next = {}
-
-    if (!fields.title.trim()) {
-      next.title = 'Title is required.'
-    }
-
-    const amt = Number(fields.amount)
-    if (fields.amount === '' || Number.isNaN(amt) || amt <= 0) {
-      next.amount = 'Amount must be a number greater than 0.'
-    }
-
-    if (!fields.date) {
-      next.date = 'Date is required.'
-    }
-
-    const tagsResult = parseTags(fields.tags)
-    if (!tagsResult.ok) {
-      next.tags = tagsResult.error
-    }
-
-    return next
+  function handleBlur(e) {
+    const { name } = e.target
+    setTouched((prev) => ({ ...prev, [name]: true }))
   }
 
   function handleSubmit(e) {
     e.preventDefault()
-    const validationErrors = validate()
 
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors)
+    if (isInvalid) {
+      // Mark all fields as touched so all errors become visible
+      setTouched({ title: true, amount: true, date: true, tags: true })
+      setErrors(allErrors)
       return
     }
 
@@ -89,8 +103,14 @@ export default function TransactionForm({
     if (resetOnSubmit) {
       setFields({ ...EMPTY_STATE, date: todayIsoDate() })
       setErrors({})
+      setTouched({})
     }
   }
+
+  const titleError = getFieldError('title')
+  const amountError = getFieldError('amount')
+  const dateError = getFieldError('date')
+  const tagsError = getFieldError('tags')
 
   return (
     <form className="form" onSubmit={handleSubmit} noValidate>
@@ -105,13 +125,14 @@ export default function TransactionForm({
           name="title"
           value={fields.title}
           onChange={handleChange}
-          aria-invalid={errors.title ? 'true' : undefined}
-          aria-describedby={errors.title ? 'tf-title-error' : undefined}
+          onBlur={handleBlur}
+          aria-invalid={titleError ? 'true' : undefined}
+          aria-describedby={titleError ? 'tf-title-error' : undefined}
           autoComplete="off"
         />
-        {errors.title && (
+        {titleError && (
           <span id="tf-title-error" className="error" role="alert">
-            {errors.title}
+            {titleError}
           </span>
         )}
       </div>
@@ -125,14 +146,15 @@ export default function TransactionForm({
           name="amount"
           value={fields.amount}
           onChange={handleChange}
+          onBlur={handleBlur}
           min="0.01"
           step="0.01"
-          aria-invalid={errors.amount ? 'true' : undefined}
-          aria-describedby={errors.amount ? 'tf-amount-error' : undefined}
+          aria-invalid={amountError ? 'true' : undefined}
+          aria-describedby={amountError ? 'tf-amount-error' : undefined}
         />
-        {errors.amount && (
+        {amountError && (
           <span id="tf-amount-error" className="error" role="alert">
-            {errors.amount}
+            {amountError}
           </span>
         )}
       </div>
@@ -146,12 +168,13 @@ export default function TransactionForm({
           name="date"
           value={fields.date}
           onChange={handleChange}
-          aria-invalid={errors.date ? 'true' : undefined}
-          aria-describedby={errors.date ? 'tf-date-error' : undefined}
+          onBlur={handleBlur}
+          aria-invalid={dateError ? 'true' : undefined}
+          aria-describedby={dateError ? 'tf-date-error' : undefined}
         />
-        {errors.date && (
+        {dateError && (
           <span id="tf-date-error" className="error" role="alert">
-            {errors.date}
+            {dateError}
           </span>
         )}
       </div>
@@ -165,19 +188,20 @@ export default function TransactionForm({
           name="tags"
           value={fields.tags}
           onChange={handleChange}
+          onBlur={handleBlur}
           placeholder="e.g. food lunch"
-          aria-invalid={errors.tags ? 'true' : undefined}
-          aria-describedby={errors.tags ? 'tf-tags-error' : undefined}
+          aria-invalid={tagsError ? 'true' : undefined}
+          aria-describedby={tagsError ? 'tf-tags-error' : undefined}
           autoComplete="off"
         />
-        {errors.tags && (
+        {tagsError && (
           <span id="tf-tags-error" className="error" role="alert">
-            {errors.tags}
+            {tagsError}
           </span>
         )}
       </div>
 
-      <button type="submit" className="button">
+      <button type="submit" className="button" disabled={isInvalid}>
         {submitLabel}
       </button>
     </form>
