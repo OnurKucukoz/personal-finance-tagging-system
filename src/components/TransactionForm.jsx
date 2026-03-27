@@ -235,6 +235,7 @@ export default function TransactionForm({
         <button
           type="button"
           className="button"
+          style={{ marginTop: '8px' }}
           onClick={handleSuggestTags}
           disabled={!canSuggest || suggestLoading}
           aria-label="Get AI suggestions"
