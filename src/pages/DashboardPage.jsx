@@ -2,7 +2,8 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTransactions } from '../domain/transactions/useTransactions'
 import { computeTagAnalytics } from '../domain/transactions/analytics'
-import { formatTry } from '../shared/format'
+import { formatMoney } from '../shared/format'
+import { useCurrency } from '../settings/useCurrency'
 import Dialog from '../components/Dialog'
 import TransactionForm from '../components/TransactionForm'
 
@@ -10,6 +11,7 @@ export default function DashboardPage() {
   const { transactions, addTransaction } = useTransactions()
   const { totalSpent, rows } = computeTagAnalytics(transactions)
   const [dialogOpen, setDialogOpen] = useState(false)
+  const { currency } = useCurrency()
 
   function handleAddTransaction(data) {
     addTransaction(data)
@@ -44,7 +46,7 @@ export default function DashboardPage() {
 
       <div className="card between" style={{ marginTop: '1.5rem' }}>
         <span className="label">Total Spent</span>
-        <span className="big">{formatTry(totalSpent)}</span>
+        <span className="big">{formatMoney(totalSpent, currency)}</span>
       </div>
 
       {rows.length === 0 ? (
@@ -61,7 +63,7 @@ export default function DashboardPage() {
               >
                 <div className="tag-row">
                   <span className="tag">{tag}</span>
-                  <span className="item__amount">{formatTry(total)}</span>
+                  <span className="item__amount">{formatMoney(total, currency)}</span>
                   <span className="percent">{Math.round(percent)}%</span>
                 </div>
                 <div className="bar">

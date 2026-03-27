@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useTransactions } from '../domain/transactions/useTransactions'
-import { formatTry } from '../shared/format'
+import { formatMoney } from '../shared/format'
+import { useCurrency } from '../settings/useCurrency'
 import TransactionForm from '../components/TransactionForm'
 import Dialog from '../components/Dialog'
 import ConfirmDialog from '../components/ConfirmDialog'
@@ -27,6 +28,7 @@ export default function HistoryPage() {
 
   const [editingTx, setEditingTx] = useState(null)
   const [deletingTx, setDeletingTx] = useState(null)
+  const { currency } = useCurrency()
 
   function handleEdit(tx) {
     setEditingTx(tx)
@@ -53,7 +55,7 @@ export default function HistoryPage() {
 
       <div className="card between" style={{ marginTop: '1.5rem' }}>
         <span className="label">Total Spent</span>
-        <span className="big">{formatTry(filteredTotalSpent)}</span>
+        <span className="big">{formatMoney(filteredTotalSpent, currency)}</span>
       </div>
 
       {activeTag && (
@@ -82,7 +84,7 @@ export default function HistoryPage() {
             <li key={t.id} className="list__item">
               <div className="row between">
                 <span className="item__title">{t.title}</span>
-                <span className="item__amount">{formatTry(t.amount)}</span>
+                <span className="item__amount">{formatMoney(t.amount, currency)}</span>
               </div>
               <div className="row between">
                 <span className="small">{t.date}</span>
