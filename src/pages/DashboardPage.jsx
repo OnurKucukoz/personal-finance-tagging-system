@@ -47,7 +47,7 @@ export default function DashboardPage() {
 
       <div className="controls-row" style={{ marginTop: '1.5rem' }}>
         <label htmlFor="currency-select" className="label">
-          Currency
+          Display Currency
         </label>
         <select
           id="currency-select"
