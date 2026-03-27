@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { parseTags } from '../domain/transactions/tags'
 import { todayIsoDate } from '../shared/date'
 
@@ -60,6 +60,42 @@ export default function TransactionForm({
   const [fields, setFields] = useState(() => buildInitialState(initialValues))
   const [errors, setErrors] = useState({})
   const [touched, setTouched] = useState({})
+  const [suggestLoading, setSuggestLoading] = useState(false)
+  const [suggestMessage, setSuggestMessage] = useState(null) // { type: 'error'|'info', text: string }
+
+  const canSuggest = fields.title.trim().length >= 2
+
+  const handleSuggestTags = useCallback(async () => {
+    setSuggestLoading(true)
+    setSuggestMessage(null)
+    try {
+      const res = await fetch('/api/suggest-tags', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: fields.title }),
+      })
+      if (!res.ok) {
+        let msg = `Server error (${res.status}).`
+        try {
+          const body = await res.json()
+          if (body?.error) msg = body.error
+        } catch { /* ignore */ }
+        setSuggestMessage({ type: 'error', text: msg })
+        return
+      }
+      const data = await res.json()
+      if (Array.isArray(data.tags) && data.tags.length > 0) {
+        setFields((prev) => ({ ...prev, tags: data.tags.join(' ') }))
+        setSuggestMessage(null)
+      } else {
+        setSuggestMessage({ type: 'info', text: 'No suggestions returned.' })
+      }
+    } catch {
+      setSuggestMessage({ type: 'error', text: 'Could not reach the suggestion service.' })
+    } finally {
+      setSuggestLoading(false)
+    }
+  }, [fields.title])
 
   const allErrors = validate(fields)
   const isInvalid = Object.keys(allErrors).length > 0
@@ -191,12 +227,32 @@ export default function TransactionForm({
           onBlur={handleBlur}
           placeholder="e.g. food lunch"
           aria-invalid={tagsError ? 'true' : undefined}
-          aria-describedby={tagsError ? 'tf-tags-error' : undefined}
+          aria-describedby={
+            tagsError ? 'tf-tags-error' : suggestMessage ? 'tf-tags-suggest-msg' : undefined
+          }
           autoComplete="off"
         />
+        <button
+          type="button"
+          className="button"
+          onClick={handleSuggestTags}
+          disabled={!canSuggest || suggestLoading}
+          aria-label="Get AI suggestions"
+        >
+          {suggestLoading ? 'Suggesting…' : 'Suggest tags'}
+        </button>
         {tagsError && (
           <span id="tf-tags-error" className="error" role="alert">
             {tagsError}
+          </span>
+        )}
+        {!tagsError && suggestMessage && (
+          <span
+            id="tf-tags-suggest-msg"
+            className={suggestMessage.type === 'error' ? 'error' : 'info'}
+            role={suggestMessage.type === 'error' ? 'alert' : 'status'}
+          >
+            {suggestMessage.text}
           </span>
         )}
       </div>

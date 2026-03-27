@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import OpenAI from 'openai';
@@ -88,11 +89,23 @@ app.post('/api/suggest-tags', async (req, res) => {
 
     return res.json({ tags });
   } catch (err) {
-    console.error('LLM request failed:', err?.message ?? err);
-    return res.status(500).json({ error: 'Failed to contact LLM provider.' });
+    const status = err?.status ?? err?.statusCode ?? null;
+    const message = err?.message ?? String(err);
+    console.error('LLM request failed:', status ? `HTTP ${status} —` : '', message);
+    const clientMsg = status === 401
+      ? 'LLM provider rejected the API key (401 Unauthorized). Check your key in .env.'
+      : status === 429
+        ? 'LLM provider rate limit reached (429). Try again shortly.'
+        : `Failed to contact LLM provider.${status ? ` (HTTP ${status})` : ''}`;
+    return res.status(500).json({ error: clientMsg });
   }
 });
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`[server] running on http://localhost:${PORT} (provider: ${LLM_PROVIDER})`);
+});
+
+server.on("error", (err) => {
+  console.error("[server] failed to start:", err?.code || "", err?.message || err);
+  process.exit(1);
 });
