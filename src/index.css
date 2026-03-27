@@ -628,3 +628,16 @@ dialog::backdrop {
   border-radius: 9999px;
   white-space: nowrap;
 }
+
+/* --- Currency controls row -------------------------------- */
+.controls-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.controls-row .input {
+  width: auto;
+  min-width: 7rem;
+}

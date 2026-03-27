@@ -4,6 +4,7 @@ import { useTransactions } from '../domain/transactions/useTransactions'
 import { computeTagAnalytics } from '../domain/transactions/analytics'
 import { formatMoney } from '../shared/format'
 import { useCurrency } from '../settings/useCurrency'
+import { CURRENCIES } from '../settings/currency'
 import Dialog from '../components/Dialog'
 import TransactionForm from '../components/TransactionForm'
 
@@ -11,7 +12,7 @@ export default function DashboardPage() {
   const { transactions, addTransaction } = useTransactions()
   const { totalSpent, rows } = computeTagAnalytics(transactions)
   const [dialogOpen, setDialogOpen] = useState(false)
-  const { currency } = useCurrency()
+  const { currency, setCurrency } = useCurrency()
 
   function handleAddTransaction(data) {
     addTransaction(data)
@@ -43,6 +44,24 @@ export default function DashboardPage() {
           onSubmit={handleAddTransaction}
         />
       </Dialog>
+
+      <div className="controls-row" style={{ marginTop: '1.5rem' }}>
+        <label htmlFor="currency-select" className="label">
+          Currency
+        </label>
+        <select
+          id="currency-select"
+          className="input"
+          value={currency}
+          onChange={(e) => setCurrency(e.target.value)}
+        >
+          {CURRENCIES.map((c) => (
+            <option key={c} value={c}>
+              {c}
+            </option>
+          ))}
+        </select>
+      </div>
 
       <div className="card between" style={{ marginTop: '1.5rem' }}>
         <span className="label">Total Spent</span>
